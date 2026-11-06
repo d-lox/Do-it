@@ -24,6 +24,47 @@ jobs:
           npm install
           npx cap add android
           npx cap sync android
+      - name: Customise Android app
+        run: |
+          cp MainActivity.java android/app/src/main/java/com/dlox/doit/MainActivity.java
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.VIBRATE" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />\n</manifest>#' android/app/src/main/AndroidManifest.xml
+          pip install pillow
+          python3 - <<'EOF'
+          import os
+          from PIL import Image
+          names = [f for f in os.listdir('.') if f.lower() == 'logo.png']
+          if not names:
+              raise SystemExit('Upload logo.PNG to the repo root')
+          src = Image.open(names[0]).convert('RGBA')
+          w, h = src.size
+          s = max(w, h)
+          sq = Image.new('RGBA', (s, s), (0, 0, 0, 0))
+          sq.paste(src, ((s - w) // 2, (s - h) // 2))
+          c0 = src.getpixel((2, 2))
+          opaque = c0[3] > 250
+          bg = c0[:3] if opaque else (20, 16, 42)
+          flat = Image.new('RGBA', (s, s), bg + (255,))
+          flat.alpha_composite(sq)
+          res = 'android/app/src/main/res/'
+          sizes = {'mdpi': (48, 108), 'hdpi': (72, 162), 'xhdpi': (96, 216), 'xxhdpi': (144, 324), 'xxxhdpi': (192, 432)}
+          for d, (l, f) in sizes.items():
+              p = res + 'mipmap-' + d + '/'
+              flat.resize((l, l), Image.LANCZOS).save(p + 'ic_launcher.png')
+              flat.resize((l, l), Image.LANCZOS).save(p + 'ic_launcher_round.png')
+              layer = Image.new('RGBA', (f, f), (0, 0, 0, 0))
+              k = int(f * 0.61)
+              layer.alpha_composite(sq.resize((k, k), Image.LANCZOS), ((f - k) // 2, (f - k) // 2))
+              layer.save(p + 'ic_launcher_foreground.png')
+          open(res + 'values/ic_launcher_background.xml', 'w').write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#%02x%02x%02x</color>\n</resources>\n' % bg)
+          if opaque:
+              from PIL import ImageDraw
+              big = Image.new('RGBA', (384, 384), (0, 0, 0, 0))
+              ImageDraw.Draw(big).ellipse([60, 60, 324, 324], fill=(255, 255, 255, 255))
+          else:
+              big = Image.new('RGBA', (384, 384), (255, 255, 255, 255))
+              big.putalpha(sq.resize((384, 384), Image.LANCZOS).split()[3])
+          big.resize((96, 96), Image.LANCZOS).save(res + 'drawable/ic_stat_doit.png')
+          EOF
       - name: Build APK
         run: |
           cd android
