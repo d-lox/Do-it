@@ -132,6 +132,11 @@ html[data-glass="off"] .pkc{background:var(--bg2)}
 @media (min-width:760px){#drawer{visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:none!important;transition:none}#drawer>.sc{padding-left:calc(20px + var(--sal,0px))}}
 .pkc{transform:scale(var(--s,.3));transform-origin:var(--ox,50%) var(--oy,50%);transition:transform .5s var(--spring)}
 html[data-anim="fade"]{--s:.96}
+.fst{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fst div{padding:12px 14px;border-radius:18px;background:var(--gl)}.fst span{display:block;font-size:24px;font-weight:700}.fst small{color:var(--mu);font-size:12px}
+.fb{display:flex;align-items:stretch;gap:8px;height:104px;margin-top:14px}.fb div{flex:1;display:grid;grid-template-rows:1fr auto;justify-items:center;gap:6px}.fb i{align-self:end;width:100%;max-width:26px;border-radius:9px;background:linear-gradient(180deg,var(--ac),transparent 170%);opacity:.5;transform-origin:bottom;animation:fbg .7s var(--spring) both}.fb .on i{opacity:1}.fb small{font-size:11px;color:var(--mu)}
+@keyframes fbg{from{transform:scaleY(.05)}}
+.fbp{display:flex;justify-content:space-between;align-items:center;padding:8px 2px;font-size:15px}
+.ap{display:flex;align-items:center;gap:12px;width:100%;padding:10px 2px;border-bottom:1px solid var(--bd);text-align:left;font-size:16px}.ap img{width:36px;height:36px;border-radius:9px}.ap span{flex:1}.ap i{width:24px;height:24px;border-radius:50%;border:2px solid var(--mu)}.ap.on i{background:var(--ac);border-color:var(--ac)}
 html[data-anim="off"] .sheet,html[data-anim="off"] .pkc,html[data-anim="off"] #drawer{transition:none!important}
 :root{--s:1}
 .sheet{opacity:1;clip-path:var(--ci,inset(0 0 100% 0 round 22px));transition:clip-path .55s var(--spring),visibility 0s linear .55s}
@@ -175,6 +180,7 @@ html[data-anim="off"] .sheet,html[data-anim="off"] .sheet.open,html[data-anim="o
 <div class="lg2"><span><i style="background:#3fb97a"></i>All done</span><span><i style="background:#a6e3bc"></i>Half or more</span><span><i style="background:#f4a3a3"></i>Under half</span><span><i style="background:#a52634"></i>None done</span><span><i style="background:var(--gl2)"></i>No tasks</span></div>
 <div class="gc" id="gc"></div>
 <div class="gc gr" id="gr"></div>
+<div class="gc" id="fs"></div>
 </aside>
 
 <section class="sheet glass" id="sAdd">
@@ -215,7 +221,6 @@ html[data-anim="off"] .sheet,html[data-anim="off"] .sheet.open,html[data-anim="o
 <label class="sw" style="color:var(--tx);font-size:16px">Edge refraction (real glass bend)<input type="checkbox" id="sRf"></label>
 <label>Clock and timer background</label>
 <div class="seg" id="cbg"><button data-c="grad">Colourful</button><button data-c="theme">App theme</button><button data-c="black">Black</button></div>
-<label>Opening animation</label><div class="seg" id="an"><button data-a="zoom">Zoom from button</button><button data-a="fade">Soft fade</button><button data-a="off">Off</button></div>
 <label>Colour theme</label><div class="pal" id="pl"></div>
 <label class="sw" style="color:var(--tx);font-size:16px">12-hour clock<input type="checkbox" id="s12"></label>
 <label class="sw" style="color:var(--tx);font-size:16px">Show seconds<input type="checkbox" id="sS"></label>
@@ -228,6 +233,17 @@ html[data-anim="off"] .sheet,html[data-anim="off"] .sheet.open,html[data-anim="o
 <button class="fld" id="sRi"></button>
 <div class="row"><div><label>From</label><button class="fld" id="sRt"></button></div><div><label>Until</label><button class="fld" id="sRu"></button></div></div>
 <div class="note">Reminders only come while you still have tasks pending today, and never outside these hours.</div>
+<div id="fbg">
+<label class="sw" style="color:var(--tx);font-size:16px">Block apps during focus<input type="checkbox" id="sFb"></label>
+<div id="fbx">
+<div class="seg" id="fbm" style="margin-top:10px"><button data-m="block">Block selected</button><button data-m="allow">Allow only selected</button></div>
+<button class="fld" id="fbA" style="margin-top:10px">Choose apps</button>
+<label class="sw" style="color:var(--tx);font-size:16px">Also during meditation<input type="checkbox" id="sFm"></label>
+<div class="fbp"><span id="fbu"></span><button class="lnk" id="fbU">Allow</button></div>
+<div class="fbp"><span id="fbo"></span><button class="lnk" id="fbO">Allow</button></div>
+</div>
+<div class="note" id="fbn"></div>
+</div>
 <button class="fld" id="sAb" style="margin-top:16px">About Do It</button>
 <p class="note">Do It 3.0. Everything is saved on this phone only. Google Tasks sync isn’t part of this version.</p>
 </section>
@@ -241,6 +257,7 @@ html[data-anim="off"] .sheet,html[data-anim="off"] .sheet.open,html[data-anim="o
 <label for="mvol">Volume</label><input type="range" id="mvol" min="0" max="100" value="60">
 <div style="height:10px"></div><button class="btn" id="mGo" style="width:100%">Begin</button>
 </section>
+<section class="sheet glass" id="sApps"><h2>Choose apps</h2><input type="text" id="apq" placeholder="Search apps" autocomplete="off"><div id="apl" style="margin-top:8px"></div><button class="btn" id="apD" style="width:100%;margin-top:14px">Done</button></section>
 <div id="wl" class="pkb"><div class="pkc"><div class="wh1">Welcome to Do It</div><ul id="wlt"><li>Do It is a focus planner for students. Plan your day, stay on task and see your progress in one place.</li><li>Add tasks, mark them not done, half done or done, and set an optional deadline.</li><li>A colour calendar, streak, goal countdown and progress graph show how you are doing.</li><li>A full-screen clock, Pomodoro and lap timer keep your study sessions focused.</li><li>Meditation gives you breathing exercises, focus sessions and calm ambient sounds.</li><li>Gentle reminders arrive only while you still have tasks waiting.</li><li>Make it yours with themes, colours and adjustable liquid glass in Settings.</li><li>There is no account. Everything stays on this phone and is never uploaded.</li><li>Made by Akash.</li></ul><button class="wy" id="wlY">I have read it</button><button class="wn" id="wlL">Read it later</button></div></div>
 <svg style="position:absolute;width:0;height:0" aria-hidden="true"><filter id="lgf" x="0%" y="0%" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.014" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="22" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="pk" class="pkb"><div class="pkc"><div id="pkh" class="pkh"></div><div id="pkb"></div><div class="pka"><button id="pkC" class="pl">Clear</button><span></span><button id="pkX" class="pl">Cancel</button><button id="pkS" class="btn">Set</button></div></div></div>
@@ -263,7 +280,7 @@ function streak(){const full=k=>{const s=stat(k);return s.n>0&&s.d===s.n};let c=
 function rollover(){if(!S.set.roll)return;const t=today();for(const k of Object.keys(S.tasks)){if(k<t)S.tasks[k].forEach(x=>{if(x.s!==2&&!x.r){x.r=1;(S.tasks[t]=S.tasks[t]||[]).push({id:Date.now()+Math.random(),t:x.t,s:x.s})}})}save()}
 const PAL={lavender:['Lavender',250,1],crimson:['Red',355,1],sunrise:['Sunrise',22,1],forest:['Forest',145,1],ocean:['Ocean',195,1],rose:['Rose',325,1],mono:['Mono',0,0]};
 function mk(h,k){const s=x=>Math.round(x*k);return{d:[`hsl(${h} ${s(90)}% 76%)`,`hsl(${h} ${s(50)}% 10%)`,`hsl(${h} ${s(32)}% 11%)`,`hsl(${h} ${s(30)}% 17%)`,`hsla(${h} ${s(70)}% 55% / .4)`,`hsla(${h+40} ${s(80)}% 60% / .28)`],l:[`hsl(${h} ${s(60)}% 38%)`,'#fff',`hsl(${h} ${s(55)}% 94%)`,`hsl(${h} ${s(45)}% 87%)`,`hsla(${h} ${s(85)}% 70% / .45)`,`hsla(${h+40} ${s(85)}% 75% / .35)`]}}
-function theme(){const r=document.documentElement,q=PAL[S.set.pal]||PAL.lavender,M=mk(q[1],q[2]),am=S.set.theme==='amoled',c=S.set.theme==='light'?M.l:M.d;r.dataset.theme=S.set.theme;r.dataset.anim=S.set.an||'zoom';r.dataset.glass=S.set.lg===false?'off':'on';{const f=S.set.gl==null?35:S.set.gl;r.style.setProperty('--gb',(3+f*.37)+'px');r.style.setProperty('--gp',(22+f*.56)+'%');r.dataset.refract=S.set.rf?'on':'off'}{const hh=q[1],kk=q[2];['--g1','--g2','--g3'].forEach((v,i)=>r.style.setProperty(v,'hsl('+(hh+[0,45,-55][i])+' '+kk*85+'% '+[58,62,52][i]+'%)'))}['--ac','--on','--bg1','--bg2','--b1','--b2'].forEach((v,i)=>r.style.setProperty(v,am&&i>1?(i<4?'#000':'transparent'):c[i]));let m=document.querySelector('meta[name=theme-color]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}m.content=am?'#000':c[2];sb('setStyle',{style:S.set.theme==='light'?'LIGHT':'DARK'});document.querySelectorAll('#th button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.set.theme));$('#pl').innerHTML=Object.entries(PAL).map(([k,v])=>`<button data-p="${k}" aria-label="${v[0]}" class="${k===S.set.pal?'on':''}" style="background:hsl(${v[1]} ${v[2]*80}% ${v[2]?60:65}%)"></button>`).join('')}
+function theme(){const r=document.documentElement,q=PAL[S.set.pal]||PAL.lavender,M=mk(q[1],q[2]),am=S.set.theme==='amoled',c=S.set.theme==='light'?M.l:M.d;r.dataset.theme=S.set.theme;r.dataset.anim='zoom';r.dataset.glass=S.set.lg===false?'off':'on';{const f=S.set.gl==null?35:S.set.gl;r.style.setProperty('--gb',(3+f*.37)+'px');r.style.setProperty('--gp',(22+f*.56)+'%');r.dataset.refract=S.set.rf?'on':'off'}{const hh=q[1],kk=q[2];['--g1','--g2','--g3'].forEach((v,i)=>r.style.setProperty(v,'hsl('+(hh+[0,45,-55][i])+' '+kk*85+'% '+[58,62,52][i]+'%)'))}['--ac','--on','--bg1','--bg2','--b1','--b2'].forEach((v,i)=>r.style.setProperty(v,am&&i>1?(i<4?'#000':'transparent'):c[i]));let m=document.querySelector('meta[name=theme-color]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}m.content=am?'#000':c[2];sb('setStyle',{style:S.set.theme==='light'?'LIGHT':'DARK'});document.querySelectorAll('#th button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.set.theme));$('#pl').innerHTML=Object.entries(PAL).map(([k,v])=>`<button data-p="${k}" aria-label="${v[0]}" class="${k===S.set.pal?'on':''}" style="background:hsl(${v[1]} ${v[2]*80}% ${v[2]?60:65}%)"></button>`).join('')}
 function sb(a,c){const B=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.StatusBar;if(!B||!B[a])return;try{Promise.resolve(B[a](c)).catch(()=>{})}catch(e){}}
 function hex(c){const x=document.createElement('canvas').getContext('2d');x.fillStyle=c;return x.fillStyle}
 function ori(){document.querySelectorAll('#or button').forEach(b=>b.classList.toggle('on',b.dataset.o===S.set.orient))}
@@ -276,7 +293,7 @@ function list(){const a=S.tasks[sel]||[];$('#list').innerHTML=a.length?a.map(x=>
 function drawCal(){const y=cal.getFullYear(),m=cal.getMonth();$('#mt').textContent=cal.toLocaleDateString(undefined,{month:'long',year:'numeric'});$('#stk').textContent=streak();
 let h=['M','T','W','T','F','S','S'].map(w=>`<div class="w">${w}</div>`).join('');const off=(new Date(y,m,1).getDay()+6)%7;h+='<div></div>'.repeat(off);
 for(let d=1;d<=new Date(y,m+1,0).getDate();d++){const k=key(new Date(y,m,d));h+=`<button class="dd ${cls(k)} ${k===today()?'td':''} ${k===sel?'sl':''}" data-k="${k}">${d}</button>`}
-$('#cal').innerHTML=h;goalCard();graph()}
+$('#cal').innerHTML=h;goalCard();graph();focusCard()}
 let GR=7;
 function dpct(k){const a=S.tasks[k]||[];return a.length?Math.round(a.reduce((s,x)=>s+(x.s===2?1:x.s===1?.5:0),0)/a.length*100):null}
 function graphOld(){const g=$('#gr'),W=340,H=200,L=36,R=14,T=20,B=28,pw=W-L-R,ph=H-T-B,n=GR,d0=new Date();d0.setHours(0,0,0,0);const X=i=>L+i*pw/(n-1),Y=v=>T+ph-v/100*ph,P=[];
@@ -301,13 +318,13 @@ const a=parse(today()),b=parse(e),n=Math.round((b-a)/864e5);if(n<0){g.innerHTML=
 let m=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth(),t=new Date(a);t.setMonth(a.getMonth()+m);if(t>b){m--;t=new Date(a);t.setMonth(a.getMonth()+m)}
 const dd=Math.round((b-t)/864e5),st=S.set.start?parse(S.set.start):a,tot=Math.max(1,Math.round((b-st)/864e5)),pct=Math.min(100,Math.max(0,Math.round((tot-n)/tot*100)));
 g.innerHTML=`<div style="font-size:13px;color:var(--mu)">${gl}</div><div><b>${n}</b> days left</div><div style="font-size:14px;color:var(--mu);margin-top:2px">${m} months ${dd} days, ${Math.floor(n/7)} weeks</div><div class="bar"><i style="width:${pct}%"></i></div><div style="font-size:12px;color:var(--mu);margin-top:6px">Target: ${b.toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'})}. ${pct}% of the time used.</div>`}
-const sheets=['#drawer','#sAdd','#sTimer','#sSet','#sMed'];
+const sheets=['#drawer','#sAdd','#sTimer','#sSet','#sMed','#sApps'];
 function wide(){return matchMedia('(min-width:760px)').matches}
 function openS(id,btn){if(id==='#drawer'&&wide()){cal=parse(sel);cal.setDate(1);drawCal();return}sheets.forEach(s=>$(s).classList.remove('open'));org($(id),btn||LB);{const e0=$(id);e0.classList.add('open');requestAnimationFrame(()=>lens(e0))}$('#scrim').classList.add('on');if(id==='#drawer'){cal=parse(sel);cal.setDate(1);drawCal()}if(id==='#sAdd'){NT.due='';dlDraw();setTimeout(()=>$('#nt').focus(),350)}}
 function closeS(){sheets.forEach(s=>{const e=$(s);clearTimeout(e._t);e.classList.remove('open','rest')});$('#scrim').classList.remove('on')}
 $('#scrim').onclick=closeS;
 $('#bMenu').onclick=()=>openS('#drawer');$('#bAdd').onclick=()=>openS('#sAdd');$('#bTimer').onclick=()=>openS('#sTimer');
-$('#bSet').onclick=()=>{$('#sN').value=S.set.name;$('#sG').value=S.set.goal;fld();cbSet();anSet();$('#sR').checked=S.set.roll;$('#s12').checked=S.set.h12;$('#sS').checked=S.set.sec;$('#sA').checked=S.set.snd!==false;$('#sV').checked=S.set.vib!==false;$('#sH').checked=S.set.hap!==false;$('#sT').checked=S.set.tap!==false;$('#sLg').checked=S.set.lg!==false;$('#sGl').value=S.set.gl==null?35:S.set.gl;$('#sRf').checked=!!S.set.rf;$('#sRm').checked=!!S.set.rem;cdn();openS('#sSet')};
+$('#bSet').onclick=()=>{$('#sN').value=S.set.name;$('#sG').value=S.set.goal;fld();cbSet();fbInit();$('#sR').checked=S.set.roll;$('#s12').checked=S.set.h12;$('#sS').checked=S.set.sec;$('#sA').checked=S.set.snd!==false;$('#sV').checked=S.set.vib!==false;$('#sH').checked=S.set.hap!==false;$('#sT').checked=S.set.tap!==false;$('#sLg').checked=S.set.lg!==false;$('#sGl').value=S.set.gl==null?35:S.set.gl;$('#sRf').checked=!!S.set.rf;$('#sRm').checked=!!S.set.rem;cdn();openS('#sSet')};
 function addTask(){const v=$('#nt').value.trim();if(!v)return;(S.tasks[sel]=S.tasks[sel]||[]).push({id:Date.now()+Math.random(),t:v,s:0,due:NT.due||'',nid:NT.due?1e6+Math.floor(Math.random()*4e5)*2:0});NT.due='';$('#nt').value='';save();list();closeS();remind()}
 $('#addGo').onclick=addTask;$('#nt').onkeydown=e=>{if(e.key==='Enter')addTask()};
 $('#list').onclick=e=>{const c=e.target.closest('[data-i]'),x=e.target.closest('[data-x]'),a=S.tasks[sel]||[];
@@ -356,7 +373,7 @@ $('#fP').onclick=()=>{if(FM==='m'){medTog();return}const n=Date.now();if(FM==='p
 $('#fR').onclick=()=>{S.set.orient=S.set.orient==='landscape'?'portrait':'landscape';save();ori();lock();fit();ctl(true)};
 addEventListener('resize',()=>{if(FM)fit()});
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)exitFS()});
-setInterval(()=>{const now=Date.now();
+setInterval(()=>{const now=Date.now();{const dt=Math.min(now-LT,216e6);LT=now;if(dt>0){if(P.run&&P.ph==='study')addF('t',Math.min(dt,Math.max(0,P.end-(now-dt))));if(L.run)addF('t',dt);if(FM==='m'&&M&&M.run&&!M.done)addF('m',dt)}if(now-LSV>10000){LSV=now;save()}if(now-LFB>1500){LFB=now;fbSync()}}
 if(P.run&&P.end-now<=0){alarm();P.ph=P.ph==='study'?'break':'study';P.left=mins(P.ph);P.end=now+P.left;tn(2,P.end,P.ph==='study'?'Study session complete':'Break is over','Open Do It to continue.')}
 if(L.run){L.el=L.acc+now-L.at;if(L.el>=LIM){alarm();L.laps++;L.acc=0;L.at=now;L.el=0}}
 draw();if(FM)fsUpd()},250);
@@ -371,7 +388,7 @@ function drag(el,ax){let st=null;const y=ax==='y';
 el.addEventListener('touchstart',e=>{if(wide()||e.target.closest('input'))return;const t=e.touches[0];st={x:t.clientX,y:t.clientY,d:0,live:0}},{passive:true});
 el.addEventListener('touchmove',e=>{if(!st)return;const t=e.touches[0],dx=t.clientX-st.x,dy=t.clientY-st.y,d=y?dy:-dx,m=y?dx:dy;if(!st.live){if(d>8&&Math.abs(d)>Math.abs(m)&&(!y||(el.querySelector('.sc')||el).scrollTop<=0)){st.live=1;el.classList.remove('rest');el.style.transition='none'}else return}st.d=Math.max(0,d);el.style.transform=y?`translateY(${st.d}px)`:`translateX(${-st.d}px)`},{passive:true});
 el.addEventListener('touchend',()=>{if(!st)return;const s=st;st=null;if(!s.live)return;el.style.transition='';el.style.transform='';if(s.d>90)closeS();else setTimeout(()=>{if(el.classList.contains('open'))el.classList.add('rest')},450)},{passive:true})}
-drag($('#drawer'),'x');['#sAdd','#sTimer','#sSet','#sMed'].forEach(s=>drag($(s),'y'));
+drag($('#drawer'),'x');['#sAdd','#sTimer','#sSet','#sMed','#sApps'].forEach(s=>drag($(s),'y'));
 const shift=n=>{const d=parse(sel);d.setDate(d.getDate()+n);sel=key(d);list()};
 let sw=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];sw={x:t.clientX,y:t.clientY}},{passive:true});
 document.addEventListener('touchend',e=>{if(!sw||FM||document.querySelector('.sheet.open')){sw=null;return}const t=e.changedTouches[0],dx=t.clientX-sw.x,dy=t.clientY-sw.y;if(Math.abs(dx)>80&&Math.abs(dy)<50){if(sw.x<28&&dx>0)openS('#drawer',$('#bMenu'));else if(e.target.closest('#list'))shift(dx>0?-1:1)}sw=null},{passive:true});
@@ -398,7 +415,7 @@ function pickDate(v,cb){const d=parse(v||today());pkOpen({t:'d',v:v||today(),cb,
 function pickTime(v,cb,clr){const[h,m]=(v||'08:00').split(':').map(Number);pkOpen({t:'t',h,m,cb,clr})}
 function pickList(title,opts,val,cb){pkOpen({t:'l',title,opts,val,cb})}
 function pkTime(){const x=S.set.h12,i=[...document.querySelectorAll('#pkb .ws')].map(e=>Math.round(e.scrollTop/44));PK.h=x?(i[0]+1)%12+(i[2]?12:0):i[0];PK.m=Math.min(59,i[1]);$('#pkh').innerHTML='<div>'+tfmt(pad(PK.h)+':'+pad(PK.m))+'</div>'}
-function pkDraw(){const p=PK,b=$('#pkb'),H=$('#pkh');$('#pkC').style.visibility=p.clr?'visible':'hidden';$('#pkS').style.display=p.t==='l'?'none':'';
+function pkDraw(){const p=PK,b=$('#pkb'),H=$('#pkh');$('#pkC').style.display=p.clr?'':'none';$('#pkS').style.display=p.t==='l'?'none':'';
 if(p.t==='d'){const y=p.vw.getFullYear(),m=p.vw.getMonth(),off=(new Date(y,m,1).getDay()+6)%7;H.innerHTML=`<small>${y}</small><div>${parse(p.v).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</div>`;
 let s=`<div class="mh"><button data-pm="-1">‹</button><span>${p.vw.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</span><button data-pm="1">›</button></div><div class="g7">${['M','T','W','T','F','S','S'].map(w=>`<div class="w">${w}</div>`).join('')}${'<div></div>'.repeat(off)}`;
 for(let d=1;d<=new Date(y,m+1,0).getDate();d++){const k=key(new Date(y,m,d));s+=`<button class="dd ${k===p.v?'sl2':''} ${k===today()?'td':''}" data-pd="${k}">${d}</button>`}b.innerHTML=s+'</div>'}
@@ -442,8 +459,30 @@ let LB=null;
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(b)LB=b},true);
 function org(el,b){if(!el||!b)return;const r=b.getBoundingClientRect(),w=wide()&&el.id!=='drawer'&&el.classList.contains('sheet'),bx=el.offsetLeft-(w?el.offsetWidth/2:0),by=el.offsetTop-(w?el.offsetHeight/2:0);el.style.setProperty('--ox',(r.left+r.width/2-bx)+'px');el.style.setProperty('--oy',(r.top+r.height/2-by)+'px');const ow=el.offsetWidth,oh=el.offsetHeight,cx=Math.min(Math.max(r.left+r.width/2-bx,0),ow),cy=Math.min(Math.max(r.top+r.height/2-by,0),oh),hw=Math.min(r.width,ow)/2,hh=Math.min(r.height,oh)/2;el.style.setProperty('--ci','inset('+Math.max(0,cy-hh)+'px '+Math.max(0,ow-cx-hw)+'px '+Math.max(0,oh-cy-hh)+'px '+Math.max(0,cx-hw)+'px round 22px)')}
 document.querySelectorAll('.sheet').forEach(s=>{const w=document.createElement('div');w.className='sc';while(s.firstChild)w.appendChild(s.firstChild);s.appendChild(w)});
-function anSet(){document.querySelectorAll('#an button').forEach(b=>b.classList.toggle('on',b.dataset.a===(S.set.an||'zoom')))}
-$('#an').onclick=e=>{const b=e.target.closest('[data-a]');if(b){S.set.an=b.dataset.a;save();anSet();theme()}};
+S.focus=S.focus||{};let LT=Date.now(),LSV=0,LFB=0;
+function addF(k,ms){const d=today(),o=S.focus[d]=S.focus[d]||{t:0,m:0};o[k]+=ms}
+function fmtD(ms){const m=Math.round(ms/60000),h=Math.floor(m/60);return h?h+'h '+pad(m%60)+'m':m+'m'}
+function focusCard(){const FD=S.focus||{},f=FD[sel]||{t:0,m:0},d0=parse(sel),B=[];let mx=1;for(let i=6;i>=0;i--){const d=new Date(d0);d.setDate(d.getDate()-i);const k=key(d),o=FD[k]||{t:0,m:0},v=o.t+o.m;mx=Math.max(mx,v);B.push({k,v,d})}
+const tot=B.reduce((a,b)=>a+b.v,0);$('#fs').innerHTML=`<div class="gh"><span class="gt">Focus time</span><span class="gn" style="margin:0">${d0.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})}</span></div><div class="fst"><div><span>${fmtD(f.t)}</span><small>Timer focus</small></div><div><span>${fmtD(f.m)}</span><small>Meditation</small></div></div><div class="fb">${B.map(b=>`<div class="${b.k===sel?'on':''}"><i style="height:${Math.max(4,Math.round(b.v/mx*100))}%"></i><small>${b.d.toLocaleDateString(undefined,{weekday:'narrow'})}</small></div>`).join('')}</div><div class="gn">Last 7 days: ${fmtD(tot)} in total</div>`}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+const FB=()=>window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.FocusBlocker;
+let APPS=null,FBS='',FBP={};
+async function fbStatus(){const f=FB();if(!f){$('#sFb').parentElement.style.display='none';$('#fbx').style.display='none';$('#fbn').textContent='App blocking is not available in this build.';return}$('#sFb').parentElement.style.display='';$('#fbx').style.display='';try{FBP=await f.status()}catch(e){}
+$('#fbu').textContent='Usage access: '+(FBP.usage?'allowed':'needed');$('#fbU').style.display=FBP.usage?'none':'';$('#fbo').textContent='Display over other apps: '+(FBP.overlay?'allowed':'needed');$('#fbO').style.display=FBP.overlay?'none':'';$('#fbn').textContent='Blocking only works while a study timer or focus session is running. Set Do It battery to Unrestricted so Android keeps it alive.'}
+function fbInit(){$('#sFb').checked=!!S.set.fb;$('#sFm').checked=!!S.set.fbm;document.querySelectorAll('#fbm button').forEach(b=>b.classList.toggle('on',b.dataset.m===(S.set.fm||'block')));$('#fbA').textContent='Choose apps ('+(S.set.fa||[]).length+')';fbStatus()}
+$('#sFb').onchange=e=>{S.set.fb=e.target.checked;save();FBS='force';fbSync()};
+$('#sFm').onchange=e=>{S.set.fbm=e.target.checked;save()};
+$('#fbm').onclick=e=>{const b=e.target.closest('[data-m]');if(b){S.set.fm=b.dataset.m;save();fbInit();FBS='force'}};
+$('#fbU').onclick=()=>{try{FB().openUsage()}catch(e){}};$('#fbO').onclick=()=>{try{FB().openOverlay()}catch(e){}};
+function apRender(){const q=$('#apq').value.toLowerCase(),on=new Set(S.set.fa||[]);$('#apl').innerHTML=(APPS||[]).filter(a=>a.name.toLowerCase().includes(q)).map(a=>`<button class="ap${on.has(a.pkg)?' on':''}" data-p="${a.pkg}"><img src="data:image/png;base64,${a.icon}" alt=""><span>${esc(a.name)}</span><i></i></button>`).join('')||'<div class="gn">No apps found.</div>'}
+$('#fbA').onclick=async()=>{const f=FB();if(!f)return;openS('#sApps');$('#apq').value='';if(!APPS){$('#apl').innerHTML='<div class="gn">Loading apps...</div>';try{APPS=(await f.apps()).apps||[]}catch(e){APPS=[]}}apRender()};
+$('#apq').oninput=apRender;
+$('#apl').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const s=new Set(S.set.fa||[]),p=b.dataset.p;if(s.has(p))s.delete(p);else s.add(p);S.set.fa=[...s];save();b.classList.toggle('on');FBS='force'};
+$('#apD').onclick=()=>{fbInit();openS('#sSet')};
+function fbSync(){const f=FB();if(!f)return;const now=Date.now(),m=S.set.fm||'block',pk=S.set.fa||[];let u=0;
+if(S.set.fb){if(P.run&&P.ph==='study')u=Math.max(u,P.end);if(L.run)u=Math.max(u,L.at+LIM-L.acc);if(S.set.fbm&&M&&M.run&&!M.done)u=Math.max(u,now+M.total-M.el)}
+const act=u&&(m==='allow'||pk.length),sig=act?m+'|'+pk.length+'|'+Math.round(u/10000):'';if(sig===FBS)return;FBS=sig;
+try{if(act)f.start({pkgs:pk,mode:m,until:u+8000});else f.stop()}catch(e){}}
 let M=null,AU=null;
 const PATS=[{n:'Box 4-4-4-4',p:[['Breathe in',4,'in'],['Hold',4,'h1'],['Breathe out',4,'out'],['Hold',4,'h0']]},{n:'4-7-8',p:[['Breathe in',4,'in'],['Hold',7,'h1'],['Breathe out',8,'out']]},{n:'Calm 4-6',p:[['Breathe in',4,'in'],['Breathe out',6,'out']]}];
 function cbSet(){document.querySelectorAll('#cbg button').forEach(b=>b.classList.toggle('on',b.dataset.c===(S.set.cb||'grad')))}
