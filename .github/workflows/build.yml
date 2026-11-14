@@ -27,11 +27,10 @@ jobs:
       - name: Customise Android app
         run: |
           cp MainActivity.java android/app/src/main/java/com/dlox/doit/MainActivity.java
-          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.VIBRATE" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />\n</manifest>#' android/app/src/main/AndroidManifest.xml
           pip install pillow
           python3 - <<'EOF'
           import os
-          from PIL import Image
+          from PIL import Image, ImageDraw
           names = [f for f in os.listdir('.') if f.lower() == 'logo.png']
           if not names:
               raise SystemExit('Upload logo.PNG to the repo root')
@@ -57,19 +56,49 @@ jobs:
               layer.save(p + 'ic_launcher_foreground.png')
           open(res + 'values/ic_launcher_background.xml', 'w').write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#%02x%02x%02x</color>\n</resources>\n' % bg)
           if opaque:
-              from PIL import ImageDraw
               big = Image.new('RGBA', (384, 384), (0, 0, 0, 0))
               ImageDraw.Draw(big).ellipse([60, 60, 324, 324], fill=(255, 255, 255, 255))
           else:
               big = Image.new('RGBA', (384, 384), (255, 255, 255, 255))
               big.putalpha(sq.resize((384, 384), Image.LANCZOS).split()[3])
           big.resize((96, 96), Image.LANCZOS).save(res + 'drawable/ic_stat_doit.png')
+          m = 'android/app/src/main/AndroidManifest.xml'
+          t = open(m).read()
+          add = ''.join('    <uses-permission android:name="android.permission.%s" />\n' % x for x in ('VIBRATE', 'POST_NOTIFICATIONS', 'USE_EXACT_ALARM'))
+          open(m, 'w').write(t.replace('</manifest>', add + '</manifest>'))
+          EOF
+          cp -r android android_base
+      - name: Add focus blocker
+        if: ${{ hashFiles('FocusBlockerPlugin.java') != '' }}
+        continue-on-error: true
+        run: |
+          D=android/app/src/main/java/com/dlox/doit
+          cp FocusBlockerPlugin.java BlockService.java $D/
+          cp MainActivityFocus.java $D/MainActivity.java
+          python3 - <<'EOF'
+          m = 'android/app/src/main/AndroidManifest.xml'
+          t = open(m).read()
+          svc = '    <service android:name="com.dlox.doit.BlockService" android:exported="false" android:foregroundServiceType="specialUse">\n        <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="focus_blocker" />\n    </service>\n    </application>'
+          t = t.replace('</application>', svc)
+          perms = ''.join('    <uses-permission android:name="android.permission.%s" />\n' % x for x in ('FOREGROUND_SERVICE', 'FOREGROUND_SERVICE_SPECIAL_USE', 'SYSTEM_ALERT_WINDOW', 'PACKAGE_USAGE_STATS'))
+          q = '    <queries>\n        <intent>\n            <action android:name="android.intent.action.MAIN" />\n            <category android:name="android.intent.category.LAUNCHER" />\n        </intent>\n        <intent>\n            <action android:name="android.intent.action.MAIN" />\n            <category android:name="android.intent.category.HOME" />\n        </intent>\n    </queries>\n'
+          open(m, 'w').write(t.replace('</manifest>', perms + q + '</manifest>'))
           EOF
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          if ./gradlew assembleDebug; then
+            echo "Built WITH the app blocker." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "The app blocker failed to compile, so this APK is built WITHOUT it." >> $GITHUB_STEP_SUMMARY
+            cd ..
+            rm -rf android
+            mv android_base android
+            cd android
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: Do-It-APK
